@@ -21,8 +21,5 @@ def main():
     # Run application
     sys.exit(app.exec())
 
-    #Ejemplo de test desarrollo
-
-
 if __name__ == "__main__":
     main()
