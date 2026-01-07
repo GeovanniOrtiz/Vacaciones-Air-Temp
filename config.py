@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 # Application Information
-APP_NAME = "Sistema de Control de Vacaciones"
+APP_NAME = "Sistema de Control de Vacaciones Test"
 APP_VERSION = "1.0.0"
 COMPANY_NAME = "Air Temp de Mexico"
 
