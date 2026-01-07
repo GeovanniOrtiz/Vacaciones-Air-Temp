@@ -20,7 +20,8 @@ def main():
     
     # Run application
     sys.exit(app.exec())
-    #Ejemplo de test
+
+    #Ejemplo de test desarrollo
 
 
 if __name__ == "__main__":
