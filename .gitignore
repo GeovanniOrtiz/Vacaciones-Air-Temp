@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+.next/
+out/
+build/
+dist/
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+data/
+test_out.txt
+test_out_v2.txt
+debug_db_final.py
+test_db.py
+test_add_record.py
