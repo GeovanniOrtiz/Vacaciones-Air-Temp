@@ -5,11 +5,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from pydantic_settings import BaseSettings
+import os
+
+# Set encoding for PostgreSQL client on Windows
+os.environ["PGCLIENTENCODING"] = "UTF8"
 
 
 class Settings(BaseSettings):
     """Application settings"""
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/vacaciones_db"
+    DATABASE_URL: str = "postgresql://postgres:Airtemp@127.0.0.1:5432/vacaciones_db"
     
     class Config:
         env_file = ".env"

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from .. import models, schemas, crud
 from ..database import get_db
+from .auth import get_current_user
 from ..services.vacation_calculator import VacationCalculator
 
 router = APIRouter(prefix="/api/vacations", tags=["vacations"])
@@ -16,9 +17,15 @@ vacation_calc = VacationCalculator()
 def get_vacation_records(
     employee_id: Optional[int] = Query(None, description="Filter by employee ID"),
     year: Optional[int] = Query(None, description="Filter by year"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
     """Get vacation records with optional filters"""
+    if current_user.role != "admin":
+        # Employees can only see their own records
+        if employee_id and employee_id != current_user.employee_id:
+            raise HTTPException(status_code=403, detail="Not enough permissions")
+        employee_id = current_user.employee_id
     if employee_id and year:
         return crud.get_vacation_records_by_year(db, employee_id, year)
     elif employee_id:
@@ -29,17 +36,31 @@ def get_vacation_records(
 
 
 @router.get("/{record_id}", response_model=schemas.VacationRecord)
-def get_vacation_record(record_id: int, db: Session = Depends(get_db)):
+def get_vacation_record(
+    record_id: int, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     """Get vacation record by ID"""
     record = crud.get_vacation_record(db, record_id)
     if not record:
         raise HTTPException(status_code=404, detail="Vacation record not found")
+        
+    if current_user.role != "admin" and record.employee_id != current_user.employee_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+        
     return record
 
 
 @router.post("/", response_model=schemas.VacationRecord)
-def create_vacation_record(record: schemas.VacationRecordCreate, db: Session = Depends(get_db)):
-    """Create new vacation record"""
+def create_vacation_record(
+    record: schemas.VacationRecordCreate, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """Create new vacation record (Admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     # Verify employee exists
     employee = crud.get_employee(db, record.employee_id)
     if not employee:
@@ -69,9 +90,12 @@ def create_vacation_record(record: schemas.VacationRecordCreate, db: Session = D
 def update_vacation_record(
     record_id: int,
     record: schemas.VacationRecordUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
-    """Update vacation record"""
+    """Update vacation record (Admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     db_record = crud.get_vacation_record(db, record_id)
     if not db_record:
         raise HTTPException(status_code=404, detail="Vacation record not found")
@@ -109,8 +133,14 @@ def update_vacation_record(
 
 
 @router.delete("/{record_id}")
-def delete_vacation_record(record_id: int, db: Session = Depends(get_db)):
-    """Delete vacation record"""
+def delete_vacation_record(
+    record_id: int, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """Delete vacation record (Admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     success = crud.delete_vacation_record(db, record_id)
     if not success:
         raise HTTPException(status_code=404, detail="Vacation record not found")

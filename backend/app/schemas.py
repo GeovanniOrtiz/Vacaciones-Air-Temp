@@ -98,3 +98,42 @@ class VacationSummary(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+# User Schemas
+class UserBase(BaseModel):
+    username: str
+    role: Optional[str] = "employee"
+    employee_id: Optional[int] = None
+    is_active: Optional[int] = 1
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    employee_id: Optional[int] = None
+    is_active: Optional[int] = None
+
+
+class User(UserBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+    role: Optional[str] = None
+    employee_id: Optional[int] = None

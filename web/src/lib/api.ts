@@ -36,19 +36,36 @@ export interface VacationSummary {
     period_end: string;
 }
 
+async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    const headers = {
+        ...options.headers,
+        'Authorization': token ? `Bearer ${token}` : '',
+    };
+
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/login';
+        }
+    }
+    return res;
+}
+
 export async function getEmployees(search?: string): Promise<Employee[]> {
     const url = new URL(`${API_BASE_URL}/employees/`);
     if (search) {
         url.searchParams.append('search', search);
     }
 
-    const res = await fetch(url.toString());
+    const res = await fetchWithAuth(url.toString());
     if (!res.ok) throw new Error('Failed to fetch employees');
     return res.json();
 }
 
 export async function getEmployee(id: number): Promise<Employee> {
-    const res = await fetch(`${API_BASE_URL}/employees/${id}`);
+    const res = await fetchWithAuth(`${API_BASE_URL}/employees/${id}`);
     if (!res.ok) throw new Error('Failed to fetch employee');
     return res.json();
 }
@@ -59,7 +76,7 @@ export async function getVacationSummary(id: number, year?: number): Promise<Vac
         url.searchParams.append('year', year.toString());
     }
 
-    const res = await fetch(url.toString());
+    const res = await fetchWithAuth(url.toString());
     if (!res.ok) throw new Error('Failed to fetch vacation summary');
     return res.json();
 }
@@ -79,7 +96,7 @@ export async function getVacationRecords(employeeId: number): Promise<VacationRe
     const url = new URL(`${API_BASE_URL}/vacations/`);
     url.searchParams.append('employee_id', employeeId.toString());
 
-    const res = await fetch(url.toString());
+    const res = await fetchWithAuth(url.toString());
     if (!res.ok) throw new Error('Failed to fetch vacation records');
     return res.json();
 }

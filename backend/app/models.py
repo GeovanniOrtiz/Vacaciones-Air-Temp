@@ -24,6 +24,7 @@ class Employee(Base):
     
     # Relationships
     vacation_records = relationship("VacationRecord", back_populates="employee", cascade="all, delete-orphan")
+    user = relationship("User", back_populates="employee", uselist=False)
 
 
 class VacationRecord(Base):
@@ -41,3 +42,19 @@ class VacationRecord(Base):
     
     # Relationships
     employee = relationship("Employee", back_populates="vacation_records")
+
+
+class User(Base):
+    """User model for authentication"""
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    role = Column(String, default="employee")  # admin, employee
+    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=True)
+    is_active = Column(Integer, default=1) # 1 for active, 0 for inactive
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    employee = relationship("Employee", back_populates="user")
