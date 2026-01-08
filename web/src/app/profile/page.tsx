@@ -92,7 +92,7 @@ export default function ProfilePage() {
         <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">Mi Perfil de Vacaciones</h1>
-                <p className="text-gray-600 mt-2">Bienvenido, {user?.username}. Aquí puedes ver tu historial y días disponibles.</p>
+                <p className="text-gray-600 mt-2">Bienvenido {summary.full_name.split(' ')[0]}. Aquí puedes ver tu historial y días disponibles.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
