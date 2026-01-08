@@ -92,6 +92,45 @@ export interface VacationRecord {
     created_at: string;
 }
 
+export interface User {
+    id: number;
+    username: string;
+    role: 'admin' | 'employee';
+    employee_id?: number;
+    is_active: number;
+    employee?: Employee;
+}
+
+export async function getUsers(): Promise<User[]> {
+    const res = await fetchWithAuth(`${API_BASE_URL.replace('/api', '')}/api/users/`);
+    if (!res.ok) throw new Error('Failed to fetch users');
+    return res.json();
+}
+
+export async function updateUserPassword(userId: number, password: string): Promise<any> {
+    const res = await fetchWithAuth(`${API_BASE_URL.replace('/api', '')}/api/users/${userId}/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+    });
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.detail || 'Failed to update password');
+    }
+    return res.json();
+}
+
+export async function deleteUser(userId: number): Promise<any> {
+    const res = await fetchWithAuth(`${API_BASE_URL.replace('/api', '')}/api/users/${userId}`, {
+        method: 'DELETE'
+    });
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.detail || 'Failed to delete user');
+    }
+    return res.json();
+}
+
 export async function getVacationRecords(employeeId: number): Promise<VacationRecord[]> {
     const url = new URL(`${API_BASE_URL}/vacations/`);
     url.searchParams.append('employee_id', employeeId.toString());

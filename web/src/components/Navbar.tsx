@@ -24,12 +24,20 @@ export function Navbar() {
                                 Inicio
                             </Link>
                             {user?.role === 'admin' && (
-                                <Link
-                                    href="/employees"
-                                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                                >
-                                    Empleados
-                                </Link>
+                                <>
+                                    <Link
+                                        href="/employees"
+                                        className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                                    >
+                                        Empleados
+                                    </Link>
+                                    <Link
+                                        href="/users"
+                                        className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                                    >
+                                        Usuarios
+                                    </Link>
+                                </>
                             )}
                         </div>
                     </div>

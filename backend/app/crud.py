@@ -199,3 +199,28 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
+    """Get all users with their associated employees"""
+    return db.query(models.User).offset(skip).limit(limit).all()
+
+
+def update_user_password(db: Session, user_id: int, new_password: str) -> Optional[models.User]:
+    """Update a user's password"""
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        db_user.hashed_password = auth_utils.get_password_hash(new_password)
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
+
+def delete_user(db: Session, user_id: int) -> bool:
+    """Delete a user"""
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return True
+    return False

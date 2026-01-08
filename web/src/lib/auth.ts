@@ -21,13 +21,16 @@ export interface AuthResponse {
  * Login with username and password
  */
 export async function login(username: string, password: string): Promise<AuthResponse> {
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
 
     const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
-        body: formData,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
     });
 
     if (!response.ok) {
