@@ -8,7 +8,7 @@ def test_auth():
     # 1. Test Login
     login_data = {
         "username": "admin",
-        "password": "adminpassword"
+        "password": "112794"
     }
     response = requests.post(f"{API_URL}/auth/login", data=login_data)
     
