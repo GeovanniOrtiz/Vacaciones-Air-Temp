@@ -21,7 +21,7 @@ def main():
     # Run application
     sys.exit(app.exec())
 
-    #Test de Desarrollo
+    # Test de Desarrollo
 
 if __name__ == "__main__":
     main()
